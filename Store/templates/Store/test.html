@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container p-12 mx-auto">
+    <div class="flex flex-col w-full px-0 mx-auto md:flex-row">
+        <div class="flex flex-col md:w-full">
+            <h2 class="mb-4 font-bold md:text-xl text-heading ">Shipping Address
+            </h2>
+            <form class="justify-center w-full mx-auto" method="post">
+                {% csrf_token %}
+                <div class="">
+                    <div class="space-x-0 lg:flex lg:space-x-4">
+                        <div class="w-full lg:w-1/2">
+                            <label for="first_name" class="block mb-3 text-sm font-semibold text-gray-500">First
+                                Name</label>
+                            {{form.first_name}}
+                        </div>
+                        <div class="w-full lg:w-1/2">
+                            <label for="last_name" class="block mb-3 text-sm font-semibold text-gray-500">Last
+                                Name</label>
+                            {{form.last_name}}
+                        </div>  
+                    </div>
+                    <div class="mt-4 space-x-0 lg:flex lg:space-x-4">
+                        <div class="w-full lg:w-1/2">
+                            <label for="phone"
+                                class="block mb-3 text-sm font-semibold text-gray-500">Email</label>
+                            {{form.email}}
+                        </div>
+                        <div class="w-full lg:w-1/2">
+                            <label for="phone"
+                                class="block mb-3 text-sm font-semibold text-gray-500">Phone</label>
+                            {{form.phone_number}}
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <div class="w-full">
+                            <label for="address"
+                                class="block mb-3 text-sm font-semibold text-gray-500">Address</label>
+                            {{form.address}}
+                        </div>
+                    </div>
+
+
+                    <div class="space-x-0 lg:flex lg:space-x-4">
+                        <div class="w-full lg:w-1/2">
+                            <label for="city"
+                                class="block mb-3 text-sm font-semibold text-gray-500">City</label>
+                            {{form.city}}
+                        </div>    
+                        <div class="w-full lg:w-1/2">
+                            <label for="city"
+                                class="block mb-3 text-sm font-semibold text-gray-500">Postal code</label>
+                            {{form.postal_code}}
+                        </div>
+                    </div>
+
+                    <div class="flex items-center mt-4">
+                        <label class="flex items-center text-sm group text-heading">
+                            {{form.check_save}}
+                            <span class="ml-2">Save this information for next time</span></label>
+                    </div>
+
+                    <div class="relative pt-3 xl:pt-6"><label for="note"
+                            class="block mb-3 text-sm font-semibold text-gray-500"> Notes
+                            (Optional)</label>
+                            {{form.note}}
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock  %}

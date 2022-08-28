@@ -1,0 +1,255 @@
+{% load cart_template_tags %}
+{% load static %}
+{% load django_htmx %}
+{% load tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css'%}">
+    {% tailwind_css %}
+    {% block css %}{% endblock  %}
+    <title>{% block title %}Page{% endblock  %}</title>
+    <script src="{% static 'js/htmx.min.js'%}" defer></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.10.2/dist/cdn.min.js"></script>
+    {% django_htmx_script %}
+</head>
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+
+ <section class="relative">
+    <nav class="flex justify-between border-b bg-black">
+      <div class="px-12 py-8 flex w-full items-center bg-black">
+        
+        <ul class="hidden xl:flex px-4 mx-auto font-semibold font-heading">
+          <li class="mr-12"><a class="hover:text-gray-600 text-white" href="">Home</a></li>
+          <li class="mr-12"><a class="hover:text-gray-600 text-white" href="{% url 'products-list' %}">Shop</a></li>
+          <li class="mr-12"><a class="hover:text-gray-600 text-white" href="#">Contact</a></li>
+          <li><a class="hover:text-gray-600 text-white" href="#">About</a></li>
+        </ul>
+        <div class="hidden xl:flex items-center">
+          
+          <a class="flex items-center hover:text-gray-600" href="{% url 'cart' %}">
+            <svg class="mr-3 text-white" width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M18.1159 8.72461H2.50427C1.99709 8.72461 1.58594 9.12704 1.58594 9.62346V21.3085C1.58594 21.8049 1.99709 22.2074 2.50427 22.2074H18.1159C18.6231 22.2074 19.0342 21.8049 19.0342 21.3085V9.62346C19.0342 9.12704 18.6231 8.72461 18.1159 8.72461Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+              <path d="M6.34473 6.34469V4.95676C6.34473 3.85246 6.76252 2.79338 7.5062 2.01252C8.24988 1.23165 9.25852 0.792969 10.3102 0.792969C11.362 0.792969 12.3706 1.23165 13.1143 2.01252C13.858 2.79338 14.2758 3.85246 14.2758 4.95676V6.34469" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+            {% if cart%}
+            <span class="inline-block w-6 h-6 text-center bg-white rounded-full font-semibold font-heading">{{cart.orderitems.count}}</span>
+            {% else %}
+            <span class="inline-block w-6 h-6 text-center bg-white rounded-full font-semibold font-heading">0</span>
+            {%endif%}
+          </a>
+        </div>
+      </div>
+      {% if request.user.is_authenticated%}
+      <a class="hidden xl:flex items-center px-12 border-l font-semibold font-heading hover:text-gray-600 bg-black" href="{% url 'logout' %}">
+        <svg class="mr-3 text-white" width="32" height="31" viewBox="0 0 32 31" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16.0006 16.3154C19.1303 16.3154 21.6673 13.799 21.6673 10.6948C21.6673 7.59064 19.1303 5.07422 16.0006 5.07422C12.871 5.07422 10.334 7.59064 10.334 10.6948C10.334 13.799 12.871 16.3154 16.0006 16.3154Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+          <path d="M24.4225 23.8963C23.6678 22.3507 22.4756 21.0445 20.9845 20.1298C19.4934 19.2151 17.7647 18.7295 15.9998 18.7295C14.2349 18.7295 12.5063 19.2151 11.0152 20.1298C9.52406 21.0445 8.33179 22.3507 7.57715 23.8963" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        <span class="text-white">Logout</span>
+      </a>
+      {% else%}
+      <a class="hidden xl:flex items-center px-12 border-l font-semibold font-heading hover:text-gray-600 bg-black" href="{% url 'login-user' %}">
+        <svg class="mr-3 text-white" width="32" height="31" viewBox="0 0 32 31" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16.0006 16.3154C19.1303 16.3154 21.6673 13.799 21.6673 10.6948C21.6673 7.59064 19.1303 5.07422 16.0006 5.07422C12.871 5.07422 10.334 7.59064 10.334 10.6948C10.334 13.799 12.871 16.3154 16.0006 16.3154Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+          <path d="M24.4225 23.8963C23.6678 22.3507 22.4756 21.0445 20.9845 20.1298C19.4934 19.2151 17.7647 18.7295 15.9998 18.7295C14.2349 18.7295 12.5063 19.2151 11.0152 20.1298C9.52406 21.0445 8.33179 22.3507 7.57715 23.8963" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        <span class="text-white">Login</span>
+      </a>
+      {%endif%}
+
+      <a class="xl:hidden flex mr-6 items-center bg-black" href="{% url 'cart' %}">
+        <svg class="mr-2" width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18.1159 8.72461H2.50427C1.99709 8.72461 1.58594 9.12704 1.58594 9.62346V21.3085C1.58594 21.8049 1.99709 22.2074 2.50427 22.2074H18.1159C18.6231 22.2074 19.0342 21.8049 19.0342 21.3085V9.62346C19.0342 9.12704 18.6231 8.72461 18.1159 8.72461Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-white"></path>
+          <path d="M6.34473 6.34469V4.95676C6.34473 3.85246 6.76252 2.79338 7.5062 2.01252C8.24988 1.23165 9.25852 0.792969 10.3102 0.792969C11.362 0.792969 12.3706 1.23165 13.1143 2.01252C13.858 2.79338 14.2758 3.85246 14.2758 4.95676V6.34469" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-white"></path>
+        </svg>
+        <span class="inline-block w-6 h-6 text-center bg-white rounded-full font-semibold font-heading">{{cart.orderitems.count}}</span>
+      </a>
+      <a class="navbar-burger self-center mr-12 xl:hidden" href="#">
+        <svg width="20" height="12" viewBox="0 0 20 12" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-white">
+          <path d="M1 2H19C19.2652 2 19.5196 1.89464 19.7071 1.70711C19.8946 1.51957 20 1.26522 20 1C20 0.734784 19.8946 0.48043 19.7071 0.292893C19.5196 0.105357 19.2652 0 19 0H1C0.734784 0 0.48043 0.105357 0.292893 0.292893C0.105357 0.48043 0 0.734784 0 1C0 1.26522 0.105357 1.51957 0.292893 1.70711C0.48043 1.89464 0.734784 2 1 2ZM19 10H1C0.734784 10 0.48043 10.1054 0.292893 10.2929C0.105357 10.4804 0 10.7348 0 11C0 11.2652 0.105357 11.5196 0.292893 11.7071C0.48043 11.8946 0.734784 12 1 12H19C19.2652 12 19.5196 11.8946 19.7071 11.7071C19.8946 11.5196 20 11.2652 20 11C20 10.7348 19.8946 10.4804 19.7071 10.2929C19.5196 10.1054 19.2652 10 19 10ZM19 5H1C0.734784 5 0.48043 5.10536 0.292893 5.29289C0.105357 5.48043 0 5.73478 0 6C0 6.26522 0.105357 6.51957 0.292893 6.70711C0.48043 6.89464 0.734784 7 1 7H19C19.2652 7 19.5196 6.89464 19.7071 6.70711C19.8946 6.51957 20 6.26522 20 6C20 5.73478 19.8946 5.48043 19.7071 5.29289C19.5196 5.10536 19.2652 5 19 5Z" fill="#8594A5" class="text-white"></path>
+        </svg>
+      </a>
+    </nav>
+    <div class="hidden navbar-menu fixed top-0 left-0 bottom-0 w-5/6 max-w-sm z-50">
+      <div class="navbar-backdrop fixed inset-0 bg-gray-800 opacity-25"></div>
+      <nav class="relative flex flex-col py-6 px-6 h-full w-full bg-white border-r overflow-y-auto">
+        <div class="flex items-center mb-8">
+          <button class="navbar-close">
+            <svg class="h-2 w-2 text-gray-500 cursor-pointer" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9.00002 1L1 9.00002M1.00003 1L9.00005 9.00002" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </button>
+        </div>
+        <div class="flex mb-8 justify-between">
+          <a class="inline-flex items-center font-semibold font-heading" href="#">
+            <svg class="mr-3" width="32" height="31" viewBox="0 0 32 31" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16.0006 16.3154C19.1303 16.3154 21.6673 13.799 21.6673 10.6948C21.6673 7.59064 19.1303 5.07422 16.0006 5.07422C12.871 5.07422 10.334 7.59064 10.334 10.6948C10.334 13.799 12.871 16.3154 16.0006 16.3154Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+              <path d="M24.4225 23.8963C23.6678 22.3507 22.4756 21.0445 20.9845 20.1298C19.4934 19.2151 17.7647 18.7295 15.9998 18.7295C14.2349 18.7295 12.5063 19.2151 11.0152 20.1298C9.52406 21.0445 8.33179 22.3507 7.57715 23.8963" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+            <span>Sign&nbsp;In</span>
+          </a>
+          <div class="flex items-center">
+            <a class="mr-10" href="#">
+              <svg width="23" height="20" viewBox="0 0 23 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M11.4998 19.2061L2.70115 9.92527C1.92859 9.14433 1.41864 8.1374 1.24355 7.04712C1.06847 5.95684 1.23713 4.8385 1.72563 3.85053V3.85053C2.09464 3.10462 2.63366 2.45803 3.29828 1.96406C3.9629 1.47008 4.73408 1.14284 5.5483 1.00931C6.36252 0.875782 7.19647 0.939779 7.98144 1.19603C8.7664 1.45228 9.47991 1.89345 10.0632 2.48319L11.4998 3.93577L12.9364 2.48319C13.5197 1.89345 14.2332 1.45228 15.0182 1.19603C15.8031 0.939779 16.6371 0.875782 17.4513 1.00931C18.2655 1.14284 19.0367 1.47008 19.7013 1.96406C20.3659 2.45803 20.905 3.10462 21.274 3.85053V3.85053C21.7625 4.8385 21.9311 5.95684 21.756 7.04712C21.581 8.1374 21.071 9.14433 20.2984 9.92527L11.4998 19.2061Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+            </a>
+            <a class="flex items-center" href="#">
+              <svg class="mr-3" width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18.1159 8.72461H2.50427C1.99709 8.72461 1.58594 9.12704 1.58594 9.62346V21.3085C1.58594 21.8049 1.99709 22.2074 2.50427 22.2074H18.1159C18.6231 22.2074 19.0342 21.8049 19.0342 21.3085V9.62346C19.0342 9.12704 18.6231 8.72461 18.1159 8.72461Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M6.34473 6.34469V4.95676C6.34473 3.85246 6.76252 2.79338 7.5062 2.01252C8.24988 1.23165 9.25852 0.792969 10.3102 0.792969C11.362 0.792969 12.3706 1.23165 13.1143 2.01252C13.858 2.79338 14.2758 3.85246 14.2758 4.95676V6.34469" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+              <span class="inline-block w-6 h-6 text-center bg-gray-100 rounded-full font-semibold font-heading">3</span>
+            </a>
+          </div>
+        </div>
+        <input class="block mb-10 py-5 px-8 bg-gray-100 rounded-md border-transparent focus:ring-blue-300 focus:border-blue-300 focus:outline-none" type="search" placeholder="Search">
+        <ul class="text-3xl font-bold font-heading">
+          <li class="mb-8"><a href="#">Home</a></li>
+          <li class="mb-8"><a href="#">Shop</a></li>
+          <li class="mb-8"><a href="#">Contact</a></li>
+          <li><a href="#">About</a></li>
+        </ul>
+      </nav>
+    </div>
+  </section>
+ 
+  
+    {% block content %}
+    {% endblock  %}
+
+ <footer class="bg-black dark:bg-gray-800 pt-4 pb-8 xl:pt-8">
+      <div class="max-w-screen-lg xl:max-w-screen-xl mx-auto px-4 sm:px-6 md:px-8 text-gray-400 dark:text-gray-300">
+          <ul class="text-lg font-light pb-8 flex flex-wrap justify-center">
+              <li class="w-1/2 md:w-1/3 lg:w-1/3">
+                  <div class="text-center">
+                      <h2 class="text-white dark:text-gray-200 text-md uppercase mb-4">
+                          Components
+                      </h2>
+                      <ul>
+                          <li class="text-white mb-4 hover:text-gray-800 dark:hover:text-white transition-colors duration-200">
+                              <a href="#">
+                                  Elements
+                              </a>
+                          </li>
+                          <li class="text-white mb-4 hover:text-gray-800 dark:hover:text-white transition-colors duration-200">
+                              <a href="#">
+                                  Forms
+                              </a>
+                          </li>
+                          <li class="text-white mb-4 hover:text-gray-800 dark:hover:text-white transition-colors duration-200">
+                              <a href="#">
+                                  Commerces
+                              </a>
+                          </li>
+                          <li class="text-white mb-4 hover:text-gray-800 dark:hover:text-white transition-colors duration-200">
+                              <a href="#">
+                                  Navigation
+                              </a>
+                          </li>
+                      </ul>
+                  </div>
+              </li>
+              <li class="w-1/2 md:w-1/3 lg:w-1/3">
+                  <div class="text-center">
+                      <h2 class="text-white text-white dark:text-gray-200 text-md uppercase mb-4">
+                          Contacts
+                      </h2>
+                      <ul>
+                          <li class="text-white mb-4 hover:text-gray-800 dark:hover:text-white transition-colors duration-200">
+                              <a href="#">
+                                  Github
+                              </a>
+                          </li>
+                          <li class="text-white mb-4 hover:text-gray-800 dark:hover:text-white transition-colors duration-200">
+                              <a href="#">
+                                  Facebook
+                              </a>
+                          </li>
+                          <li class="text-white mb-4 hover:text-gray-800 dark:hover:text-white transition-colors duration-200">
+                              <a href="#">
+                                  Twitter
+                              </a>
+                          </li>
+                          <li class="text-white mb-4 hover:text-gray-800 dark:hover:text-white transition-colors duration-200">
+                              <a href="#">
+                                  LinkedIn
+                              </a>
+                          </li>
+                      </ul>
+                  </div>
+              </li>
+              <li class="w-1/2 md:w-1/3 lg:w-1/3">
+                  <div class="text-center">
+                      <h2 class="text-white dark:text-gray-200 text-md uppercase mb-4">
+                          Customization
+                      </h2>
+                      <ul>
+                          <li class="text-white mb-4 hover:text-gray-800 dark:hover:text-white transition-colors duration-200">
+                              <a href="#">
+                                  Settings
+                              </a>
+                          </li>
+                          <li class="text-white mb-4 hover:text-gray-800 dark:hover:text-white transition-colors duration-200">
+                              <a href="#">
+                                  Themes
+                              </a>
+                          </li>
+                          <li class="text-white mb-4 hover:text-gray-800 dark:hover:text-white transition-colors duration-200">
+                              <a href="#">
+                                  Plugins
+                              </a>
+                          </li>
+                          <li class="text-white mb-4 hover:text-gray-800 dark:hover:text-white transition-colors duration-200">
+                              <a href="#">
+                                  LinkedIn
+                              </a>
+                          </li>
+                      </ul>
+                  </div>
+              </li>
+          </ul>
+          <div class="pt-8 flex border-t border-gray-200 max-w-xs mx-auto items-center justify-between">
+              <a href="#">
+                  <svg width="20" height="20" fill="currentColor" class="text-white text-xl hover:text-gray-800 dark:hover:text-white transition-colors duration-200" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z">
+                      </path>
+                  </svg>
+              </a>
+              <a href="#">
+                  <svg width="20" height="20" fill="currentColor" class="text-white text-xl hover:text-gray-800 dark:hover:text-white transition-colors duration-200" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M1684 408q-67 98-162 167 1 14 1 42 0 130-38 259.5t-115.5 248.5-184.5 210.5-258 146-323 54.5q-271 0-496-145 35 4 78 4 225 0 401-138-105-2-188-64.5t-114-159.5q33 5 61 5 43 0 85-11-112-23-185.5-111.5t-73.5-205.5v-4q68 38 146 41-66-44-105-115t-39-154q0-88 44-163 121 149 294.5 238.5t371.5 99.5q-8-38-8-74 0-134 94.5-228.5t228.5-94.5q140 0 236 102 109-21 205-78-37 115-142 178 93-10 186-50z">
+                      </path>
+                  </svg>
+              </a>
+              
+              <a href="#">
+                  <svg width="20" height="20" fill="currentColor" class="text-white text-xl hover:text-gray-800 dark:hover:text-white transition-colors duration-200" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M477 625v991h-330v-991h330zm21-306q1 73-50.5 122t-135.5 49h-2q-82 0-132-49t-50-122q0-74 51.5-122.5t134.5-48.5 133 48.5 51 122.5zm1166 729v568h-329v-530q0-105-40.5-164.5t-126.5-59.5q-63 0-105.5 34.5t-63.5 85.5q-11 30-11 81v553h-329q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52 87-43.5 114.5-15.5q171 0 275 113.5t104 332.5z">
+                      </path>
+                  </svg>
+              </a>
+            
+          </div>
+          <div class="text-center pt-10 sm:pt-12 font-light flex items-center justify-center">
+              <form class="flex flex-col md:flex-row w-3/4 md:w-full max-w-sm md:space-x-3 space-y-3 md:space-y-0 justify-center">
+                  <div class=" relative ">
+                      <input type="text" id="&quot;form-subscribe-Subscribe" class=" rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent" placeholder="Email"/>
+                      </div>
+                      <button class="flex-shrink-0 px-4 py-2 text-base font-semibold text-black bg-white rounded-lg shadow-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-purple-200" type="submit">
+                          Subscribe
+                      </button>
+                  </form>
+              </div>
+              <div class="text-white text-center pt-10 sm:pt-12 font-light flex items-center justify-center">
+                  Created by Youv
+              </div>
+          </div>
+</footer>
+</body>
+</html>

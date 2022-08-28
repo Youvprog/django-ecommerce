@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block title %}Checkout{% endblock  %}
+
+{% block content %}
+
+<div class="container p-12 mx-auto">
+    <div class="flex flex-col w-full px-0 mx-auto md:flex-row">
+        <div class="flex flex-col md:w-full">
+            <h2 class="mb-4 font-bold md:text-xl text-heading ">Shipping Address
+            </h2>
+            <form class="justify-center w-full mx-auto" method="POST">
+                {% csrf_token %}
+                <div class="">
+                    <div class="space-x-0 lg:flex lg:space-x-4">
+                        <div class="w-full lg:w-1/2">
+                            <label for="first_name" class="block mb-3 text-sm font-semibold text-gray-500">First
+                                Name</label>
+                            {{form.first_name}}
+                        </div>
+                        <div class="w-full lg:w-1/2">
+                            <label for="last_name" class="block mb-3 text-sm font-semibold text-gray-500">Last
+                                Name</label>
+                            {{form.last_name}}
+                        </div>  
+                    </div>
+                    <div class="mt-4 space-x-0 lg:flex lg:space-x-4">
+                        <div class="w-full lg:w-1/2">
+                            <label for="phone"
+                                class="block mb-3 text-sm font-semibold text-gray-500">Email</label>
+                            {{form.email}}
+                        </div>
+                        <div class="w-full lg:w-1/2">
+                            <label for="phone"
+                                class="block mb-3 text-sm font-semibold text-gray-500">Phone</label>
+                            {{form.phone_number}}
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <div class="w-full">
+                            <label for="address"
+                                class="block mb-3 text-sm font-semibold text-gray-500">Address</label>
+                            {{form.address}}
+                        </div>
+                    </div>
+
+
+                    <div class="space-x-0 lg:flex lg:space-x-4">
+                        <div class="w-full lg:w-1/2">
+                            <label for="city"
+                                class="block mb-3 text-sm font-semibold text-gray-500">City</label>
+                            {{form.city}}
+                        </div>    
+                        <div class="w-full lg:w-1/2">
+                            <label for="city"
+                                class="block mb-3 text-sm font-semibold text-gray-500">Postal code</label>
+                            {{form.postal_code}}
+                        </div>
+                    </div>
+
+                    <div class="flex items-center mt-4">
+                        <label class="flex items-center text-sm group text-heading">
+                            {{form.check_save}}
+                            <span class="ml-2">Save this information for next time</span></label>
+                    </div>
+
+                    <div class="relative pt-3 xl:pt-6"><label for="note"
+                            class="block mb-3 text-sm font-semibold text-gray-500"> Notes
+                            (Optional)</label>
+                            {{form.note}}
+                    </div>
+                    <div class="mt-4">
+                        <input 
+                           type="submit" 
+                           class="text-gray-900 hover:text-white border border-gray-800 hover:bg-gray-900 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800 w-full">
+                    </div>
+                    <div class="mt-4">
+                        <a href="{% url 'cart' %}" 
+                           type="button" 
+                           class="text-gray-900 hover:text-white border border-gray-800 hover:bg-gray-900 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800 w-full">Return to cart</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="flex flex-col w-full ml-0 lg:ml-12 lg:w-2/5">
+            <div class="pt-12 md:pt-0 2xl:ps-4">
+                <h2 class="text-xl font-bold">Order Summary
+                </h2>
+                <div class="mt-8">
+                    <div class="flex flex-col space-y-4">
+                        {% for orderitem in orderitems%}
+                        <div class="flex space-x-4">
+                            <div>
+                                <img src="{{orderitem.product.prod_img.url}}" alt="image"
+                                    class="w-20">
+                            </div>
+                            <div>
+                                <h2 class="text-xl font-bold">{{orderitem.product.name}}</h2>
+                                <p class="text-sm">Qte : {{orderitem.quantity}}</p>
+                                <span class="text-red-600">Price</span> {{orderitem.orderitem_price}} DA
+                            </div>
+                        </div>
+                        {%endfor%}
+                    </div>
+                </div>
+                <div class="flex p-4 mt-4">
+                    <h2 class="text-xl font-bold">ITEMS {{cart.orderitems.count}}</h2>
+                </div>
+                <div
+                    class="flex items-center w-full py-4 text-sm font-semibold border-b border-gray-300 lg:py-5 lg:px-3 text-heading last:border-b-0 last:text-base last:pb-0">
+                    Subtotal<span class="ml-2">{{cart.cart_total_price}} DA</span></div>
+                <div
+                    class="flex items-center w-full py-4 text-sm font-semibold border-b border-gray-300 lg:py-5 lg:px-3 text-heading last:border-b-0 last:text-base last:pb-0">
+                    Shipping Tax<span class="ml-2">??</span></div>
+                <div
+                    class="flex items-center w-full py-4 text-sm font-semibold border-b border-gray-300 lg:py-5 lg:px-3 text-heading last:border-b-0 last:text-base last:pb-0">
+                    Total<span class="ml-2">??</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock  %}

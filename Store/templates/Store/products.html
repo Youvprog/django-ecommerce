@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block title %}Products{% endblock  %}
+
+
+{% block content %}
+
+<section class="py-20 bg-gray-100">
+  <div class="container mx-auto px-4">
+    <div class="flex flex-wrap -mx-4 mb-20 items-center justify-between">
+      <div class="w-full lg:w-auto px-4 mb-12 xl:mb-0">
+        <h2 class="text-5xl font-bold font-heading">
+          <a href="{%url 'products-list' %}"><span>All products</span></a>
+        </h2>
+      </div>
+
+      <div class="flex items-center justify-center">
+        <div class="flex border-2 rounded">
+            <input name="search_prod" id="search_prod" type="text" class="px-4 py-2 w-80" placeholder="Search...">
+            <button class="flex items-center justify-center px-4 border-l"
+                    hx-post="{% url 'by-search' %}"
+                    hx-target="#products-list" 
+                    hx-swap="outerHTML">
+                <svg class="w-6 h-6 text-gray-600" fill="currentColor" xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24">
+                    <path
+                        d="M16.32 14.9l5.39 5.4a1 1 0 0 1-1.42 1.4l-5.38-5.38a8 8 0 1 1 1.41-1.41zM10 16a6 6 0 1 0 0-12 6 6 0 0 0 0 12z" />
+                </svg>
+            </button>
+        </div>
+     </div>
+
+      <div class="w-full lg:w-auto px-4 flex flex-wrap items-center">
+        <div class="w-full sm:w-auto mb-4 sm:mb-0 mr-5">
+          <div class="flex items-center">
+            <div  x-data="{ isOpen: false }" class="relative inline-block text-left">
+              <div>
+                <button type="button" @click="isOpen = !isOpen" class="group inline-flex justify-center text-sm font-medium text-gray-700 hover:text-gray-900" id="menu-button" aria-expanded="false" aria-haspopup="true">
+                  Sort
+                  <!-- Heroicon name: solid/chevron-down -->
+                  <svg class="flex-shrink-0 -mr-1 ml-1 h-5 w-5 text-gray-400 group-hover:text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+              </div>
+  
+              <div
+                    x-show="isOpen"
+                    x-transition:enter="transition ease-out duration-100 transform"
+                    x-transition:enter-start="opacity-0 scale-95"
+                    x-transition:enter-end="opacity-100 scale-100"
+                    x-transition:leave="transition ease-in duration-75 transform"
+                    x-transition:leave-start="opacity-100 scale-100"
+                    x-transition:leave-end="opacity-0 scale-95"
+                    class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-2xl bg-white ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
+                <div class="py-1" role="none">
+              
+                  {% for filter in filters%}
+                  <a href="{% url 'sorted' filter.slug %}" class="text-gray-500 block px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900" role="menuitem" tabindex="-1" id="{{filter.id}}"> {{filter.name}} </a>
+                  {%endfor%}
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flex flex-wrap -mx-3 mb-24">
+     
+      <div class="hidden lg:block w-1/4 px-3">
+        <div class="mb-6 py-10 px-12 bg-gray-50">
+          <h3 class="mb-8 text-2xl font-bold font-heading">Category</h3>
+          <ul>
+            {% for category in categories%}
+            <li class="mb-4 cursor-pointer hover:text-blue-500" 
+                hx-post="{%url 'arranged' category.id %}" 
+                hx-target="#products-list" 
+                hx-swap="outerHTML">{{category.title|title}}</li>
+            {%endfor%}
+          </ul>
+        </div>
+        
+    
+        <div class="mb-6 py-10 px-12 bg-gray-50">
+          <h3 class="mb-8 text-2xl font-bold font-heading">Colors</h3>
+          <ul>
+          {% for color in colors%}
+          <li class=" text-{{color.name}}-500 mb-4 cursor-pointer hover:text-blue-500"
+              hx-post="{% url 'sorted-with-colors' color.id %}"
+              hx-target="#products-list"
+              hx-swap="outerHTML">{{color.name}}</li>
+          {%endfor%}
+        </ul>
+        </div>
+
+
+        <div class="mb-6 py-10 px-12 bg-gray-50">
+          <h3 class="mb-8 text-2xl font-bold font-heading">Price</h3>
+          <div>
+            <input id=" range-value" class="w-full mb-4 outline-none appearance-none bg-gray-100 h-1 rounded cursor-pointer" type="range" min="{{prices.price__min}}" step="10" max="{{prices.price__max}}" value="50">
+            <div class="flex justify-between">
+              <span class="inline-block text-lg font-bold font-heading text-blue-300">{{prices.price__min}} DA</span>
+              <span class="inline-block text-lg font-bold font-heading text-blue-300">{{prices.price__max}} DA</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+       
+      {% include 'Store/includes/products_list.html' %}
+       
+
+    </div>
+    <div class="text-center">
+      <a class="inline-block bg-orange-300 hover:bg-orange-400 text-white font-bold font-heading py-6 px-8 rounded-md uppercase" href="#">Show More</a>
+    </div>
+  </div>
+</section>
+
+{% endblock  %}
+

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <p>{{msg}}</p>
+
+    <table border="1">
+        <thead>
+             <tr>
+                 <th>Product</th>
+                 <th>Quantity</th>
+                 <th>Price</th>
+             </tr>
+        </thead>
+        <tbody>
+            {% for orderitem in orderitems%}
+            <tr>
+                <td>{{orderitem.product.name}}</td>
+                <td>{{orderitem.quantity}}</td>
+                <td>{{orderitem.orderitem_price}}</td>
+            </tr>
+            {%endfor%}
+        </tbody>
+    </table>
+    
+</body>
+</html>
