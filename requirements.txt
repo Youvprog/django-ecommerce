@@ -2,7 +2,7 @@ asgiref==3.5.2
 Django==3.2.14
 django-browser-reload==1.6.0
 django-htmx==1.12.1
-django-tailwind==3.4.0
+django-tailwind==2.2.2
 Pillow==9.2.0
 sqlparse==0.4.2
 tzdata==2022.2
